@@ -1,0 +1,81 @@
+﻿@page "/"
+@inject ModbusService modbusService
+@if (!IsRun) {
+<button class="btn btn-primary" @onclick="Start">Start</button> 
+}
+@if (IsRun) {
+
+    <button class="btn btn-primary" @onclick="Stop">Stop</button>
+    <div>
+        <input type="number" @bind-value="values[0]" />
+        <input type="number" @bind-value="values[1]" />
+        <input type="number" @bind-value="values[2]" />
+        <input type="number" @bind-value="values[3]" />
+        <input type="number" @bind-value="values[4]" />
+        <input type="number" @bind-value="values[5]" />
+        <input type="number" @bind-value="values[6]" />
+        <input type="number" @bind-value="values[7]" />
+        <input type="number" @bind-value="values[8]" />
+        <input type="number" @bind-value="values[9]" />
+
+    </div>
+    <button class="btn btn-primary" @onclick="Send">Send</button>
+    <button class="btn btn-primary" @onclick="Read">Read</button>
+    @if (_readData is not null && _readData.Count() > 0) {
+        foreach (var item in _readData) {
+            <h5>@item</h5>
+        }
+    }
+    @if (errorMessage != "") {
+        <h1>@errorMessage</h1>
+    }
+}
+    
+@code{
+    private ushort[] _readData { get; set; } = { };
+    private bool IsRun { get; set; }
+    private string errorMessage { get; set; }
+    private List<ushort> values { get; set; } = new() {0,0,0,0,0,0,0,0,0,0 };
+    private async void Start() {
+        try {
+            modbusService.StartModbusTcpSlave();
+            await modbusService.InitMaster();
+            IsRun = true;
+            StateHasChanged();
+        }
+        catch(Exception ex) {
+            errorMessage = ex.Message;
+        }
+
+    }
+    private void Stop() {
+        try {
+            modbusService.StopTCPSlave();
+            IsRun = false;
+            StateHasChanged();
+        }
+        catch (Exception ex) {
+            errorMessage = ex.Message;
+        }
+
+    }
+    private async void Read() {
+        try {
+            _readData = await modbusService.ReadRegisters();
+            StateHasChanged();
+        }
+        catch (Exception ex) {
+            errorMessage = ex.Message;
+        }
+        
+    }
+    private async void Send() {
+        try {
+            await modbusService.SendDataToRegisters(values.ToList());
+        }
+        catch (Exception ex) {
+            errorMessage = ex.Message;
+        }
+        
+    }
+}
