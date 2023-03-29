@@ -60,8 +60,8 @@ public class ModbusService {
         // читаем регистры и возвращаем результат
         return await _master.ReadHoldingRegistersAsync(_slaveID, startAddress, readRegisterCount);
     }
-    public async Task SendDataToRegisters(string value) {
-        ushort startAddress = 1; 
-        await _master.WriteSingleRegisterAsync(_slaveID, startAddress, ushort.Parse(value));
+    public async Task SendDataToRegisters(IReadOnlyList<ushort> ushorts) {
+        ushort startAddress = 1;
+        await _master.WriteMultipleRegistersAsync(_slaveID, startAddress, ushorts.ToArray());
     }
 }

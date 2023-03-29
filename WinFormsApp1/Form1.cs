@@ -39,7 +39,11 @@ namespace WinFormsApp1
 
         private async void button3_Click(object sender, EventArgs e)
         {
-            await _modbusService.SendDataToRegisters(textBox1.Text);
+            var sendRegisterArr = new List<ushort>() { 
+                ushort.Parse(textBox1.Text),
+                ushort.Parse(textBox2.Text),
+            };
+            await _modbusService.SendDataToRegisters(sendRegisterArr);
         }
 
         private async void button4_Click(object sender, EventArgs e)
