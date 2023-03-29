@@ -25,6 +25,8 @@ namespace WinFormsApp1
             button2.Enabled = IsRun;
             button3.Enabled = IsRun;
             button4.Enabled = IsRun;
+            textBox1.Text = "0";
+            textBox1.Text = "0";
         }
 
         private void button2_Click(object sender, EventArgs e)
